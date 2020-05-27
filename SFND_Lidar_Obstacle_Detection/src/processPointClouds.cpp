@@ -42,8 +42,28 @@ template<typename PointT>
 std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud) 
 {
   // TODO: Create two new point clouds, one cloud with obstacles and other with segmented plane
+    typename pcl::PointCloud<PointT>::Ptr obstacleCloud { new (pcl::PointCloud<PointT>) };
+    typename pcl::PointCloud<PointT>::Ptr roadCloud { new (pcl::PointCloud<PointT>) };
 
-    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult(cloud, cloud);
+    for (int index : inliers->indices)
+    {
+        roadCloud->points.push_back(cloud->points[index]); // Same result as implemented on the comment below for Road.
+    }
+
+    // Create the filtering object
+    pcl::ExtractIndices<pcl::PointXYZ> extract;
+
+    // Extract the inliers (Road)
+    extract.setInputCloud (cloud);
+    extract.setIndices (inliers);
+    // extract.setNegative (false);
+    // extract.filter (*roadCloud);
+
+    // Extract the inliers (Car obstacles)
+    extract.setNegative (true);
+    extract.filter (*obstacleCloud);
+
+    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult(obstacleCloud, roadCloud);
     return segResult;
 }
 
