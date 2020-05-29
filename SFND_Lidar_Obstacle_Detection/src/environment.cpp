@@ -42,7 +42,14 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
 
     ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
     pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
-    renderPointCloud(viewer,inputCloud,"inputCloud");
+    // renderPointCloud(viewer,inputCloud,"inputCloud");
+
+    // Min and Max values for CropBox region of interest based filtering
+    Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
+    Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, 0.1, minPoint, maxPoint);
+    renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
+    
 }
 
 void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
