@@ -49,7 +49,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // Min and Max values for CropBox region of interest based filtering
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
     Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
-    pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, 0.1, minPoint, maxPoint);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, 0.2, minPoint, maxPoint);
     // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
 
     // Plane Segmentation 
@@ -59,10 +59,10 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
     renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(0,1,0));
 
     // Clustering
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 3, 30);
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 20, 1000);
     
     int clusterId = 0;
-    std::vector<Color> colors = {Color(1,0,0), Color(1,1,0), Color(1,0,1)};
+    std::vector<Color> colors = {Color(1,1,0), Color(1,1,1), Color(0,0,1)}; // Yellow, White, Blue
     for(pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
     {
         if (renderCluster)
