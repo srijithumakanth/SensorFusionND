@@ -86,7 +86,8 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     }
 
     // Create the filtering object
-    pcl::ExtractIndices<pcl::PointXYZ> extract;
+    // pcl::ExtractIndices<pcl::PointXYZ> extract;
+    pcl::ExtractIndices<PointT> extract;
 
     // Extract the inliers (Road)
     extract.setInputCloud (cloud);
@@ -109,10 +110,14 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     // Time segmentation process
     auto startTime = std::chrono::steady_clock::now();
 	pcl::PointIndices::Ptr inliers {new pcl::PointIndices};
+
     // TODO:: Fill in this function to find inliers for the cloud.
     pcl::ModelCoefficients::Ptr coefficients {new pcl::ModelCoefficients};
+    
     // Create the segmentation object
-    pcl::SACSegmentation<pcl::PointXYZ> seg;
+    // pcl::SACSegmentation<pcl::PointXYZ> seg;
+    pcl::SACSegmentation<PointT> seg;
+    
     // Optional
     seg.setOptimizeCoefficients (true);
     // Mandatory

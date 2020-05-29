@@ -39,7 +39,9 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // ----------------------------------------------------
     // -----Open 3D viewer and display City Block     -----
     // ----------------------------------------------------
-
+    bool renderCluster = true;
+    bool renderBoundingBox = true;
+    
     ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
     pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
     // renderPointCloud(viewer,inputCloud,"inputCloud");
@@ -48,7 +50,42 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
     Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
     pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, 0.1, minPoint, maxPoint);
-    renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
+    // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
+
+    // Plane Segmentation 
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(boxFilteredCloud, 100, 0.2);
+    // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->RansacPlane(boxFilteredCloud, 300, 0.2);
+    renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1,0,0));
+    renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(0,1,0));
+
+    // Clustering
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 3, 30);
+    
+    int clusterId = 0;
+    std::vector<Color> colors = {Color(1,0,0), Color(1,1,0), Color(1,0,1)};
+    for(pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
+    {
+        if (renderCluster)
+        {
+            std::cout << "cluster size ";
+            pointProcessorI->numPoints(cluster);
+            renderPointCloud(viewer,cluster,"obstCloud"+std::to_string(clusterId),colors[clusterId]);
+        }
+        if (renderBoundingBox)
+        {
+            Box box = pointProcessorI->BoundingBox(cluster);
+            renderBox(viewer,box,clusterId);
+        }
+        
+        ++clusterId;
+        
+
+    }
+    
+    
+    // // Render a box to represent the ego car
+    // Box box = pointProcessorI->BoundingBox();
+    // renderBox(viewer,box,clusterId);
     
 }
 
