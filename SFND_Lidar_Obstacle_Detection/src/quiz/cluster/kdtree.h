@@ -25,7 +25,7 @@ struct KdTree
 	: root(NULL)
 	{}
 
-	void insertHelper (Node** node, int depth, std::vector<float> point, int id)
+	void insertHelper (Node** node, uint depth, std::vector<float> point, int id)
 	{
 		if (*node == nullptr)
 		{
@@ -33,7 +33,7 @@ struct KdTree
 		}
 		else
 		{
-			int d = depth % 2;
+			uint d = depth % 2;
 			if (point[d] < (*node)->point[d])
 			{
 				insertHelper(&(*node)->left, depth+1, point, id);
