@@ -192,7 +192,8 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 			if (inliers.count(index)>0)
 				continue;
 			
-			pcl::PointXYZ point = cloud->points[index];
+			// pcl::PointXYZ point = cloud->points[index];
+			PointT point = cloud->points[index];
 			float x3 = point.x;
 			float y3 = point.y;
 			float z3 = point.z;
@@ -282,6 +283,56 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     return clusters;
 }
 
+// void clusterHelper (int id, const std::vector<std::vector<float>>& cloud, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol)
+// {
+// 	processed[id] = true;
+// 	cluster.push_back(id);
+
+// 	// Nearby points
+// 	std::vector<int> nearby = tree->search(points[id], distanceTol);
+
+// 	for (int i : nearby)
+// 	{
+// 		if (!processed[i])
+// 			clusterHelper(i, points, cluster, processed, tree, distanceTol);
+// 	}
+// }
+
+template<typename PointT>
+std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::KdTreeClustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize)
+{
+
+    // Time clustering process
+    auto startTime = std::chrono::steady_clock::now();
+
+    std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
+
+    // TODO:: Fill in the function to perform euclidean clustering to group detected obstacles
+    
+    // Custom kDTree
+    KdTree* tree = new KdTree;
+    std::vector<std::vector<float>> points;
+    for (int i = 0; i < clouds.size(); i++)
+    {
+        // Extracting 3D points
+        PointT point = cloud->point;
+        std::vector<float> pointVector;
+        pointVector.push_back(point.x);
+        pointVector.push_back(point.y);
+        pointVector.push_back(point.z);
+
+        tree->insert(pointVector, i);
+        points.push_back(pointVector);
+    }
+	
+    
+
+    auto endTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    std::cout << "clustering took " << elapsedTime.count() << " milliseconds and found " << clusters.size() << " clusters" << std::endl;
+
+    return clusters;
+}
 
 template<typename PointT>
 Box ProcessPointClouds<PointT>::BoundingBox(typename pcl::PointCloud<PointT>::Ptr cluster)

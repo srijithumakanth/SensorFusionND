@@ -49,13 +49,14 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
 
     // Plane Segmentation 
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(boxFilteredCloud, 100, 0.2);
-    // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->RansacPlane(boxFilteredCloud, 300, 0.2);
+    // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(boxFilteredCloud, 100, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->RansacPlane(boxFilteredCloud, 100, 0.2);
     renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1,0,0));
     renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(0,1,0));
 
     // Clustering
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 20, 1000);
+    // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 20, 1000);
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->KdTreeClustering(segmentCloud.first, 1.0, 20, 1000);
     
     int clusterId = 0;
     std::vector<Color> colors = {Color(1,1,0), Color(1,1,1), Color(0,0,1)}; // Yellow, White, Blue
