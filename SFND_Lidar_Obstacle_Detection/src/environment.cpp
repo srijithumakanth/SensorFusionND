@@ -40,7 +40,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     // -----Open 3D viewer and display City Block     -----
     // ----------------------------------------------------
     bool renderCluster = true;
-    bool renderBoundingBox = false;
+    bool renderBoundingBox = true;
 
     // Min and Max values for CropBox region of interest based filtering
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
@@ -177,6 +177,7 @@ int main (int argc, char** argv)
     // Real City block
     ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
     std::vector<boost::filesystem::path> stream = pointProcessorI->streamPcd("../src/sensors/data/pcd/data_1");
+    // std::vector<boost::filesystem::path> stream = pointProcessorI->streamPcd("../src/sensors/data/pcd/data_2");
     auto streamIterator = stream.begin();
     pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloudI;
 
