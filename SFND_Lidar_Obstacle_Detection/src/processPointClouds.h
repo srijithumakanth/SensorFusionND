@@ -21,7 +21,7 @@
 #include <unordered_set>
 
 // Custom header to include kDTree
-#include "./quiz/cluster/kdtree.h"
+#include "kdtree_pcl.h"
 
 template<typename PointT>
 class ProcessPointClouds {
@@ -47,8 +47,6 @@ public:
     
     // Custom clustering
     std::vector<typename pcl::PointCloud<PointT>::Ptr> KdTreeClustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize);
-    std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol);
-    void clusterHelper (int id, const std::vector<std::vector<float>>& points, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol);
 
     Box BoundingBox(typename pcl::PointCloud<PointT>::Ptr cluster);
 
@@ -57,6 +55,13 @@ public:
     typename pcl::PointCloud<PointT>::Ptr loadPcd(std::string file);
 
     std::vector<boost::filesystem::path> streamPcd(std::string dataPath);
+
+private:
+    // std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol);
+    // void clusterHelper (int id, const std::vector<std::vector<float>>& points, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol);
+    std::vector<std::vector<int>> euclideanCluster(typename pcl::PointCloud<PointT>::Ptr cloud, KdTree* tree, float distanceTol);
+    void clusterHelper (int id, typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol);
+    
   
 };
 #endif /* PROCESSPOINTCLOUDS_H_ */

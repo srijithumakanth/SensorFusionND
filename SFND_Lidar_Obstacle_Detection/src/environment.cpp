@@ -39,27 +39,43 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     // ----------------------------------------------------
     // -----Open 3D viewer and display City Block     -----
     // ----------------------------------------------------
+    
+    // Render flags
     bool renderCluster = true;
     bool renderBoundingBox = true;
 
+    // Filter hyper parameters
+    float filterRes = 0.4;
+    int maxIT = 40;
+    float planeRes = 0.3;
+
+    // kD Cluster hyper parameters
+    float clusterTolerance = 0.5;
+    int minSize = 10;
+    int maxSize = 140;
+
+                                                        /* ################################################################## */
+    
     // Min and Max values for CropBox region of interest based filtering
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
-    Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
-    pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, 0.2, minPoint, maxPoint);
+    // Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
+    Eigen::Vector4f maxPoint (30.0, 6.0, 1.0, 1.0);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, filterRes, minPoint, maxPoint);
     // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
 
     // Plane Segmentation 
     // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(boxFilteredCloud, 100, 0.2);
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->RansacPlane(boxFilteredCloud, 100, 0.3);
-    // renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1,0,0));
-    renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(0,1,0));
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->RansacPlane(boxFilteredCloud, maxIT, planeRes);
+    // renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1,0,0)); // Red
+    renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(1,1,0)); // Yellow
 
     // Clustering
     // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 20, 1000);
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->KdTreeClustering(segmentCloud.first, 0.6, 10, 5000);
+    
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->KdTreeClustering(segmentCloud.first, clusterTolerance, minSize, maxSize);
     
     int clusterId = 0;
-    std::vector<Color> colors = {Color(1,1,0), Color(1,1,1), Color(0,0,1)}; // Yellow, White, Blue
+    std::vector<Color> colors = {Color(0,1,0), Color(1,1,1), Color(0,0,1)}; // Green, White, Blue
     for(pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
     {
         if (renderCluster)
@@ -71,7 +87,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
         if (renderBoundingBox)
         {
             Box box = pointProcessorI->BoundingBox(cluster);
-            renderBox(viewer,box,clusterId);
+            renderBox(viewer,box,clusterId, Color(1,0,0),1);
         }
         
         ++clusterId;  
