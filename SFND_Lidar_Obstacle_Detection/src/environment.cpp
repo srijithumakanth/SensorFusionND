@@ -34,17 +34,13 @@ std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer
     return cars;
 }
 
-void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
+void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointClouds<pcl::PointXYZI>* pointProcessorI, const pcl::PointCloud<pcl::PointXYZI>::Ptr& inputCloud)
 {
     // ----------------------------------------------------
     // -----Open 3D viewer and display City Block     -----
     // ----------------------------------------------------
     bool renderCluster = true;
-    bool renderBoundingBox = true;
-    
-    ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
-    pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
-    // renderPointCloud(viewer,inputCloud,"inputCloud");
+    bool renderBoundingBox = false;
 
     // Min and Max values for CropBox region of interest based filtering
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
@@ -77,8 +73,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
             renderBox(viewer,box,clusterId);
         }
         
-        ++clusterId;
-        
+        ++clusterId;  
 
     }
     
@@ -180,10 +175,26 @@ int main (int argc, char** argv)
     // simpleHighway(viewer);
 
     // Real City block
-    cityBlock(viewer);
+    ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
+    std::vector<boost::filesystem::path> stream = pointProcessorI->streamPcd("../src/sensors/data/pcd/data_1");
+    auto streamIterator = stream.begin();
+    pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloudI;
 
     while (!viewer->wasStopped ())
     {
+        // Clear viewer
+        viewer->removeAllPointClouds();
+        viewer->removeAllShapes();
+
+        // Load pcd and run obstacle detection process
+        inputCloudI = pointProcessorI->loadPcd((*streamIterator).string());
+        cityBlock(viewer, pointProcessorI, inputCloudI);
+
+        streamIterator++;
+        if(streamIterator == stream.end())
+            streamIterator = stream.begin();
+
         viewer->spinOnce ();
+        
     } 
 }
