@@ -283,20 +283,50 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     return clusters;
 }
 
-// void clusterHelper (int id, const std::vector<std::vector<float>>& cloud, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol)
-// {
-// 	processed[id] = true;
-// 	cluster.push_back(id);
+template<typename PointT>
+void ProcessPointClouds<PointT>::clusterHelper (int id, const std::vector<std::vector<float>>& points, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol)
+{
+	processed[id] = true;
+	cluster.push_back(id);
 
-// 	// Nearby points
-// 	std::vector<int> nearby = tree->search(points[id], distanceTol);
+	// Nearby points
+	std::vector<int> nearby = tree->search(points[id], distanceTol);
 
-// 	for (int i : nearby)
-// 	{
-// 		if (!processed[i])
-// 			clusterHelper(i, points, cluster, processed, tree, distanceTol);
-// 	}
-// }
+	for (int i : nearby)
+	{
+		if (!processed[i])
+			clusterHelper(i, points, cluster, processed, tree, distanceTol);
+	}
+}
+
+template<typename PointT>
+std::vector<std::vector<int>> ProcessPointClouds<PointT>::euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol)
+{
+
+	// TODO: Fill out this function to return list of indices for each cluster
+
+	std::vector<std::vector<int>> clusters;
+	
+	std::vector<bool> processed(points.size(), false);
+
+	int i = 0;
+	while (i < points.size())
+	{
+		if (processed[i])
+		{
+			i++;
+			continue;
+		}
+
+		std::vector<int> cluster;
+		clusterHelper (i, points, cluster, processed, tree, distanceTol);
+		clusters.push_back(cluster);
+		i++;
+	}
+
+	return clusters;
+
+}
 
 template<typename PointT>
 std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::KdTreeClustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize)
@@ -312,10 +342,10 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::K
     // Custom kDTree
     KdTree* tree = new KdTree;
     std::vector<std::vector<float>> points;
-    for (int i = 0; i < clouds.size(); i++)
+    for (int i = 0; i < cloud->points.size(); i++)
     {
         // Extracting 3D points
-        PointT point = cloud->point;
+        PointT point = cloud->points[i];
         std::vector<float> pointVector;
         pointVector.push_back(point.x);
         pointVector.push_back(point.y);
@@ -325,7 +355,23 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::K
         points.push_back(pointVector);
     }
 	
+    // Cluster
+    std::vector<std::vector<int>> clusterIdx =  ProcessPointClouds<PointT>::euclideanCluster(points, tree, clusterTolerance);
     
+    for (auto clusterIdx : clusterIdx)
+    {
+        typename pcl::PointCloud<PointT>::Ptr clusterCloud (new pcl::PointCloud<PointT>());
+        for (int indices : clusterIdx)
+        {
+            clusterCloud->points.push_back(cloud->points[indices]);
+        }
+        clusterCloud->width = clusterCloud->points.size();
+        clusterCloud->height = 1;
+        clusterCloud->is_dense = true;
+        if (clusterCloud->width >= minSize && clusterCloud->width <= maxSize)
+            clusters.push_back(clusterCloud);
+
+    }
 
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
