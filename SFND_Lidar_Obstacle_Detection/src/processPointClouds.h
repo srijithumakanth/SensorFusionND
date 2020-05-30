@@ -21,7 +21,7 @@
 #include <unordered_set>
 
 // Custom header to include kDTree
-#include "kdtree_pcl.h"
+#include "kdtree3D.h"
 
 template<typename PointT>
 class ProcessPointClouds {
