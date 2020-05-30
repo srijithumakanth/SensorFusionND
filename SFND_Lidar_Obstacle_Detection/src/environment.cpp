@@ -54,14 +54,18 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     int minSize = 10;
     int maxSize = 140;
 
-                                                        /* ################################################################## */
+    /*  ####################################################################################################################### */
     
+    /* ################# FILTERING ######################################## */
+
     // Min and Max values for CropBox region of interest based filtering
     Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0);
-    // Eigen::Vector4f maxPoint (30.0, 6.0, 3.0, 1.0);
-    Eigen::Vector4f maxPoint (30.0, 6.0, 1.0, 1.0);
+    Eigen::Vector4f maxPoint (30.0, 6.0, 1.0, 1.0); // Removed ground plane obstacles and buildings on the side.
+    
     pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, filterRes, minPoint, maxPoint);
     // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
+
+    /* ################# SEGMENTATION ######################################## */
 
     // Plane Segmentation 
     // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(boxFilteredCloud, 100, 0.2);
@@ -69,9 +73,10 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     // renderPointCloud(viewer, segmentCloud.first, "Obstacle Cloud", Color(1,0,0)); // Red
     renderPointCloud(viewer, segmentCloud.second, "Road Cloud", Color(1,1,0)); // Yellow
 
+    /* ################# EUCLEDIAN CLUSTERING ######################################## */
+
     // Clustering
     // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, 1.0, 20, 1000);
-    
     std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->KdTreeClustering(segmentCloud.first, clusterTolerance, minSize, maxSize);
     
     int clusterId = 0;
