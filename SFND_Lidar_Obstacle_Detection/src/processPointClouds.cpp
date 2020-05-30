@@ -350,10 +350,12 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::K
     // Cluster
     std::vector<std::vector<int>> clusterIdx =  ProcessPointClouds<PointT>::euclideanCluster(cloud, tree, clusterTolerance);
     
-    for (auto clusterIdx : clusterIdx)
+    // for (auto clusterIdx : clusterIdx)
+    for (auto Idx : clusterIdx)
     {
         typename pcl::PointCloud<PointT>::Ptr clusterCloud (new pcl::PointCloud<PointT>());
-        for (int indices : clusterIdx)
+        // for (int indices : clusterIdx)
+        for (int indices : Idx)
         {
             clusterCloud->points.push_back(cloud->points[indices]);
         }
