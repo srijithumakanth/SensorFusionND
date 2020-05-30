@@ -284,7 +284,6 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 }
 
 template<typename PointT>
-// void ProcessPointClouds<PointT>::clusterHelper (int id, const std::vector<std::vector<float>>& points, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol)
 void ProcessPointClouds<PointT>::clusterHelper (int id, typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<int>& cluster, std::vector<bool>& processed, KdTree* tree, float distanceTol)
 {
 	processed[id] = true;
@@ -297,19 +296,16 @@ void ProcessPointClouds<PointT>::clusterHelper (int id, typename pcl::PointCloud
 	for (int i : nearby)
 	{
 		if (!processed[i])
-			// clusterHelper(i, points, cluster, processed, tree, distanceTol);
 			clusterHelper(i, cloud, cluster, processed, tree, distanceTol);
 	}
 }
 
 template<typename PointT>
-// std::vector<std::vector<int>> ProcessPointClouds<PointT>::euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol)
 std::vector<std::vector<int>> ProcessPointClouds<PointT>::euclideanCluster(typename pcl::PointCloud<PointT>::Ptr cloud, KdTree* tree, float distanceTol)
 {
 
 	// TODO: Fill out this function to return list of indices for each cluster
 
-	// std::vector<std::vector<int>> clusters;
 	std::vector<std::vector<int>> clusters;
 	
 	// std::vector<bool> processed(points.size(), false);
@@ -328,23 +324,6 @@ std::vector<std::vector<int>> ProcessPointClouds<PointT>::euclideanCluster(typen
 		clusters.push_back(cluster);
 		i++;
     }
-    /* 
-	int i = 0;
-	while (i < points.size())
-	{
-		if (processed[i])
-		{
-			i++;
-			continue;
-		}
-
-		std::vector<int> cluster;
-		clusterHelper (i, points, cluster, processed, tree, distanceTol);
-		clusters.push_back(cluster);
-		i++;
-	}
-    
-    */
 
 	return clusters;
 
@@ -367,22 +346,8 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::K
     {
         tree->insert(cloud->points[i], i);
     }
-    // std::vector<std::vector<float>> points;
-    // for (int i = 0; i < cloud->points.size(); i++)
-    // {
-    //     // Extracting 3D points
-    //     PointT point = cloud->points[i];
-    //     std::vector<float> pointVector;
-    //     pointVector.push_back(point.x);
-    //     pointVector.push_back(point.y);
-    //     pointVector.push_back(point.z);
-
-    //     tree->insert(pointVector, i);
-    //     points.push_back(pointVector);
-    // }
-	
+    
     // Cluster
-    // std::vector<std::vector<int>> clusterIdx =  ProcessPointClouds<PointT>::euclideanCluster(points, tree, clusterTolerance);
     std::vector<std::vector<int>> clusterIdx =  ProcessPointClouds<PointT>::euclideanCluster(cloud, tree, clusterTolerance);
     
     for (auto clusterIdx : clusterIdx)
