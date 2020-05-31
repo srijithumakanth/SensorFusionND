@@ -45,23 +45,24 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
     bool renderBoundingBox = true;
 
     // Filter hyper parameters
-    float filterRes = 0.3; //0.4
-    int maxIT = 40; //40
-    float planeRes = 0.3; //0.3
+    float filterRes = 0.15; //0.3
+    int maxIT = 50; //40
+    float planeRes = 0.2; //0.3
 
     // kD Cluster hyper parameters
-    float clusterTolerance = 0.5; //0.5
-    int minSize = 50; //50
-    int maxSize = 150; //140
+    float clusterTolerance = 0.3; //0.5
+    int minSize = 10; //50
+    int maxSize = 1000; //140
 
     /*  ####################################################################################################################### */
     
     /* ################# FILTERING ######################################## */
 
     // Min and Max values for CropBox region of interest based filtering
-    Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0); //-3.0-third
-    Eigen::Vector4f maxPoint (30.0, 6.0, 1.0, 1.0); // Removed ground plane obstacles and buildings on the side.
-    
+    // Eigen::Vector4f minPoint (-10.0, -6.5, -3.0, 1.0); //-3.0-third
+    // Eigen::Vector4f maxPoint (30.0, 6.0, 1.0, 1.0); // Removed ground plane obstacles and buildings on the side.
+    Eigen::Vector4f minPoint (-20.0, -6.0, -2.0, 1.0); //-3.0-third
+    Eigen::Vector4f maxPoint (30.0, 7.0, 5.0, 1.0); // Removed ground plane obstacles and buildings on the side.
     pcl::PointCloud<pcl::PointXYZI>::Ptr boxFilteredCloud = pointProcessorI->FilterCloud(inputCloud, filterRes, minPoint, maxPoint);
     // renderPointCloud(viewer,boxFilteredCloud,"boxFilteredCloud");
 
@@ -217,7 +218,7 @@ int main (int argc, char** argv)
         if(streamIterator == stream.end())
             streamIterator = stream.begin();
 
-        viewer->spinOnce (200);
+        viewer->spinOnce ();
         
     } 
 }
