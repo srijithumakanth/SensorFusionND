@@ -4,6 +4,7 @@ add_definitions(-std=c++11)
 
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
+set(CMAKE_BUILD_TYPE Debug)
 
 project(camera_fusion)
 
@@ -53,3 +54,7 @@ target_link_libraries (detect_keypoints ${OpenCV_LIBRARIES})
 # Executables for describe keypoints
 add_executable (describe_keypoints src/describe_keypoints/describe_keypoints.cpp)
 target_link_libraries (describe_keypoints ${OpenCV_LIBRARIES})
+
+# Executables for descriptor matching
+add_executable (descriptor_matching src/descriptor_matching/descriptor_matching.cpp src/descriptor_matching/structIO.cpp)
+target_link_libraries (descriptor_matching ${OpenCV_LIBRARIES})
