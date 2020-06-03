@@ -59,7 +59,16 @@ void writeLidarPts(std::vector<LidarPoint> &input, const char* fileName)
 void readLidarPts(const char* fileName, std::vector<LidarPoint> &output)
 {
     std::ifstream in(fileName);
-    read_pod_vector(in, output);
+    if (in.is_open())
+    {
+        std::cout << "LiDAR file stream is fine!" << std::endl;
+        read_pod_vector(in, output);
+    }
+    else
+    {
+        std::cout << "LiDAR file stream is not fine!" << std::endl;
+    }
+    
 }
 
 
@@ -74,7 +83,15 @@ void writeKeypoints(std::vector<cv::KeyPoint> &input, const char* fileName)
 void readKeypoints(const char* fileName, std::vector<cv::KeyPoint> &output)
 {
     std::ifstream in(fileName);
-    read_pod_vector(in, output);
+    if (in.is_open())
+    {
+        std::cout << "Keypoint file stream is fine!" << std::endl;
+        read_pod_vector(in, output);
+    }
+    else
+    {
+        std::cout << "Keypoint file stream is not fine!" << std::endl;
+    }
 }
 
 
