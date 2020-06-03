@@ -52,21 +52,21 @@ void descKeypoints1()
     double t1 = (double)cv::getTickCount();
     detector->detect(imgGray, kptsSURF);
     t1 = ((double)cv::getTickCount() - t1) / cv::getTickFrequency();
-    cout << "BRISK detector with n= " << kptsSURF.size() << " keypoints in " << 1000 * t1 / 1.0 << " ms" << endl;
+    cout << "SURF detector with n= " << kptsSURF.size() << " keypoints in " << 1000 * t1 / 1.0 << " ms" << endl;
 
     descriptor = cv::xfeatures2d::SURF::create();
     cv::Mat descSURF;
     t = (double)cv::getTickCount();
     descriptor->compute(imgGray, kptsSURF, descSURF);
     t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-    cout << "BRISK descriptor in " << 1000 * t / 1.0 << " ms" << endl;
+    cout << "SURF descriptor in " << 1000 * t / 1.0 << " ms" << endl;
 
     // visualize results
     cv::Mat visImage1 = img.clone();
     cv::drawKeypoints(img, kptsSURF, visImage1, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     string windowName1 = "SURF Results";
     cv::namedWindow(windowName1, 1);
-    imshow(windowName, visImage1);
+    imshow(windowName1, visImage1);
     cv::waitKey(0);
 }
 
