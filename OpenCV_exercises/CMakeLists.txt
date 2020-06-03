@@ -41,3 +41,7 @@ target_link_libraries (gradient_sobel ${OpenCV_LIBRARIES})
 
 add_executable (magnitude_sobel src/gradient_filtering/magnitude_sobel.cpp)
 target_link_libraries (magnitude_sobel ${OpenCV_LIBRARIES})
+
+# Executables for Haris corner detector
+add_executable (cornerness_harris src/cornerness_harris/cornerness_harris.cpp)
+target_link_libraries (cornerness_harris ${OpenCV_LIBRARIES})
