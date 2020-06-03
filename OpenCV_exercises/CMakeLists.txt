@@ -45,3 +45,7 @@ target_link_libraries (magnitude_sobel ${OpenCV_LIBRARIES})
 # Executables for Haris corner detector
 add_executable (cornerness_harris src/cornerness_harris/cornerness_harris.cpp)
 target_link_libraries (cornerness_harris ${OpenCV_LIBRARIES})
+
+# Executables for detect_keypoints
+add_executable (detect_keypoints src/detect_keypoints/detect_keypoints.cpp)
+target_link_libraries (detect_keypoints ${OpenCV_LIBRARIES})
