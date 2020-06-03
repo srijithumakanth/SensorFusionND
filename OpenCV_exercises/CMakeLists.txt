@@ -31,3 +31,13 @@ target_link_libraries(load_image_2 ${OpenCV_LIBRARIES})
 
 add_executable (load_image_3 src/load_image_3.cpp)
 target_link_libraries(load_image_3 ${OpenCV_LIBRARIES})
+
+# Executables for intensity gradient smoothening and filtering
+add_executable (gaussian_smoothing src/gradient_filtering/gaussian_smoothing.cpp)
+target_link_libraries (gaussian_smoothing ${OpenCV_LIBRARIES})
+
+add_executable (gradient_sobel src/gradient_filtering/gradient_sobel.cpp)
+target_link_libraries (gradient_sobel ${OpenCV_LIBRARIES})
+
+add_executable (magnitude_sobel src/gradient_filtering/magnitude_sobel.cpp)
+target_link_libraries (magnitude_sobel ${OpenCV_LIBRARIES})
