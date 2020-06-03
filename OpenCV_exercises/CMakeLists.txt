@@ -49,3 +49,7 @@ target_link_libraries (cornerness_harris ${OpenCV_LIBRARIES})
 # Executables for detect_keypoints
 add_executable (detect_keypoints src/detect_keypoints/detect_keypoints.cpp)
 target_link_libraries (detect_keypoints ${OpenCV_LIBRARIES})
+
+# Executables for describe keypoints
+add_executable (describe_keypoints src/describe_keypoints/describe_keypoints.cpp)
+target_link_libraries (describe_keypoints ${OpenCV_LIBRARIES})
