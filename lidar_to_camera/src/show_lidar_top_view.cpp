@@ -33,13 +33,16 @@ void showLidarTopview()
         // TODO: 
         // 1. Change the color of the Lidar points such that 
         // X=0.0m corresponds to red while X=20.0m is shown as green.
-        float val = it->x;
-        float maxVal = worldSize.height;
-        int red = min(255, (int)(255 * abs((val - maxVal) / maxVal )));
-        int green = min(255, (int)(255 * (1 - abs((val - maxVal) / maxVal ))));
-        
-        cv::circle(topviewImg, cv::Point(x, y), 5, cv::Scalar(0, green, red), -1);
-        
+        float zw = (*it).z; // world position in m with y facing left from sensor, x straight ahead and z facing up.
+        if(zw > -1.40)
+        {
+            float val = it->x;
+            float maxVal = worldSize.height;
+            int red = min(255, (int)(255 * abs((val - maxVal) / maxVal )));
+            int green = min(255, (int)(255 * (1 - abs((val - maxVal) / maxVal ))));
+            
+            cv::circle(topviewImg, cv::Point(x, y), 5, cv::Scalar(0, green, red), -1);
+        }
         // 2. Remove all Lidar points on the road surface while preserving 
         // measurements on the obstacles in the scene.
     }
