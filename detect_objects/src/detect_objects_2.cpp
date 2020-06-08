@@ -13,7 +13,8 @@ using namespace std;
 void detectObjects2()
 {
     // load image from file
-    cv::Mat img = cv::imread("../images/s_thrun.jpg");
+    // cv::Mat img = cv::imread("../images/s_thrun.jpg");
+    cv::Mat img = cv::imread("../images/vegetables.jpg");
 
     // load class names from file
     string yoloBasePath = "../dat/yolo/";
@@ -57,7 +58,8 @@ void detectObjects2()
     net.forward(netOutput, names);
 
     // Scan through all bounding boxes and keep only the ones with high confidence
-    float confThreshold = 0.20;
+    // float confThreshold = 0.20;
+    float confThreshold = 0.90;
     vector<int> classIds;
     vector<float> confidences;
     vector<cv::Rect> boxes;
