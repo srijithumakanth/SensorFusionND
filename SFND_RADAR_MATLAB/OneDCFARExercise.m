@@ -22,10 +22,12 @@ plot(s);
 
 % 1. Define the following:
 % 1a. Training Cells
-% 1b. Guard Cells 
+T = 12;
+% 1b. Guard Cells
+G = 4;
 
 % Offset : Adding room above noise threshold for desired SNR 
-offset=3;
+offset=5;
 
 % Vector to hold threshold values 
 threshold_cfar = [];
@@ -34,19 +36,23 @@ threshold_cfar = [];
 signal_cfar = [];
 
 % 2. Slide window across the signal length
-for i = 1:(Ns-(G+T))     
+for i = 1:(Ns-(G+T+1))     
 
     % 2. - 5. Determine the noise threshold by measuring it within the training cells
-
+    noise_level = sum(s(i:i+T-1));
     % 6. Measuring the signal within the CUT
-
+    threshold = (noise_level/T)*offset;
+    threshold_cfar = [threshold_cfar, {threshold}];
+    
     % 8. Filter the signal above the threshold
-
+    signal = s(i+T+G);
+    
+    if (signal<threshold)
+        signal = 0;
+    end
+    
     signal_cfar = [signal_cfar, {signal}];
 end
-
-
-
 
 % plot the filtered signal
 plot (cell2mat(signal_cfar),'g--');
