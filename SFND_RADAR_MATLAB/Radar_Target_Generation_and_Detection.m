@@ -101,11 +101,11 @@ Mix_Reshape = reshape(Mix, Nr, Nd);
 %run the FFT on the beat signal along the range bins dimension (Nr) and
 %normalize.
 sig_fft1 = fft(Mix_Reshape, Nr);
-sig_fft1 = sig_fft1 ./ Nr;
 
  % *%TODO* :
 % Take the absolute value of FFT output
 sig_fft1 = abs(sig_fft1);
+sig_fft1 = sig_fft1 ./ max(sig_fft1); % normalize
 
  % *%TODO* :
 % Output of FFT is double sided signal, but we are interested in only one side of the spectrum.
