@@ -3,6 +3,7 @@
 #include "ukf.h"
 
 using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
 int main() 
 {
@@ -23,8 +24,13 @@ int main()
     // ukf.AugmentedSigmaPoints(&Xsig_aug);
 
     /* Call for Sigma point prediction */
-    MatrixXd Xsig_pred = MatrixXd(15, 5);
-    ukf.SigmaPointPrediction(&Xsig_pred);
+    // MatrixXd Xsig_pred = MatrixXd(15, 5);
+    // ukf.SigmaPointPrediction(&Xsig_pred);
+    
+    /* Call to predict mean and covariance from predicted sigma points */
+    VectorXd x_pred = VectorXd(5);
+    MatrixXd P_pred = MatrixXd(5, 5);
+    ukf.PredictMeanAndCovariance(&x_pred, &P_pred);
 
     // print result
     //   std::cout << "Xsig = " << std::endl << Xsig << std::endl;
