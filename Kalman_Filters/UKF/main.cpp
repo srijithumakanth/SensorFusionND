@@ -37,6 +37,11 @@ int main()
     MatrixXd S_out = MatrixXd(3, 3);
     ukf.PredictRadarMeasurement(&z_out, &S_out);
     
+    /* Call to Update State */
+    VectorXd x_out = VectorXd(5);
+    MatrixXd P_out = MatrixXd(5, 5);
+    ukf.UpdateState(&x_out, &P_out);
+    
     // print result
     //   std::cout << "Xsig = " << std::endl << Xsig << std::endl;
 
