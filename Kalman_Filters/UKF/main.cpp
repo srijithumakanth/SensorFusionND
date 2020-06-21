@@ -33,9 +33,9 @@ int main()
     // ukf.PredictMeanAndCovariance(&x_pred, &P_pred);
 
     /* Call to predict RADAR measurements */
-    VectorXd z_out = VectorXd(3);
-    MatrixXd S_out = MatrixXd(3, 3);
-    ukf.PredictRadarMeasurement(&z_out, &S_out);
+    // VectorXd z_out = VectorXd(3);
+    // MatrixXd S_out = MatrixXd(3, 3);
+    // ukf.PredictRadarMeasurement(&z_out, &S_out);
     
     /* Call to Update State */
     VectorXd x_out = VectorXd(5);
